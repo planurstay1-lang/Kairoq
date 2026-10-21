@@ -1451,6 +1451,7 @@ async function handle(req,res,{isOwner,callModel,secure,checkRuntime,screenshot,
    }
    return send(res,200,{settings:{secrets:secrets.status(id),engine:builder.loadMeta(id).engine||'kairoq'}}),true;
   }
+  if(action==='/suggestions'&&method==='GET'){const meta=builder.loadMeta(id);let files={};try{files=meta.current_version?builder.loadFiles(id,meta.current_version):{}}catch{}return send(res,200,{suggestions:require('./next-steps').suggest(meta,files)}),true}
   if(action==='/download'&&method==='GET'){
    const meta=builder.loadMeta(id),bytes=require('./react-export').zip(id);
    const name=String(meta.name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60)||'app';

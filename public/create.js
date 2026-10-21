@@ -351,7 +351,7 @@ function verifiedCard(v,checks,added){
 function renderVersions(){
  const sel=$('versions');sel.replaceChildren();
  for(const v of [...state.project.versions].reverse()){const o=document.createElement('option');o.value=v.n;o.textContent='v'+v.n+' · '+(v.broken?'⚠ did not load · ':'')+(v.summary||'').slice(0,40);if(v.n===state.project.current_version)o.selected=true;sel.append(o)}
- syncRestore();
+ syncRestore();loadSuggestions();
 }
 function previewFor(n){return state.project.preview_url.replace(/\/v\/\d+\/$/,'/v/'+n+'/')}
 function setPreview(url){if(!url)return;state.runtimeErrors=[];renderErrors();state.selected=null;renderVisual();$('frame').src=url;$('open').href=url;$('preview-open').href=url;watchPreview()}
@@ -383,6 +383,19 @@ async function rebuildPreview(){
 }
 $('preview-rebuild').onclick=rebuildPreview;
 $('versions').onchange=()=>{setPreview(previewFor($('versions').value));syncRestore()};
+// Next steps above the prompt, like Lovable's: read from the app itself (no credit). A chip
+// fills the prompt so the owner can edit it, or opens Publish or Checks.
+let suggestedFor='';
+async function loadSuggestions(){
+ const box=$('suggest');if(!box||!state.project)return;
+ const key=state.project.id+':'+state.project.current_version+':'+(state.project.published?1:0);
+ if(key===suggestedFor)return;suggestedFor=key;
+ let list=[];try{({suggestions:list=[]}=await api('/projects/'+state.project.id+'/suggestions'))}catch{list=[]}
+ box.replaceChildren();box.classList.toggle('hidden',!list.length);
+ for(const sg of list){const b=el('button','suggest-chip',sg.label);b.type='button';
+  b.onclick=()=>{if(sg.open){$(sg.open+'-open')?.click();return}const t=$('chat-input');t.value=sg.prompt||sg.label;t.dispatchEvent(new Event('input',{bubbles:true}));t.focus();t.setSelectionRange(t.value.length,t.value.length)};
+  box.append(b)}
+}
 // Restore only makes sense when the preview shows a version that is not the current one.
 function syncRestore(){const r=$('restore');if(!r||!state.project)return;r.disabled=Number($('versions').value)===state.project.current_version}
 $('restore').onclick=async()=>{
