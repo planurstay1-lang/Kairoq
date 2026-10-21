@@ -472,7 +472,10 @@ async function scanCurrentChatForLoops(){
   const chat=getChat();
   const messages=(chat?.messages||[]).slice(-20).map(m=>({role:m.role,content:m.contentText||m.content||""}));
   if(!messages.length){
-    setStatus("There is no current conversation to scan.",true);
+    // Nothing to scan yet: put the question in the prompt so one Enter asks Kairoq directly.
+    setMainView("command");setStatus("");
+    promptEl.value="What am I forgetting? Look through my open outcomes, recent emails and calendar, and list anything unfinished.";
+    resizePrompt();promptEl.focus();promptEl.setSelectionRange(promptEl.value.length,promptEl.value.length);
     return;
   }
   setStatus("Kairoq is looking for unfinished outcomes…");
@@ -1515,14 +1518,14 @@ function setImageMode(on){
   const btn=$("#imageModeBtn");
   const vbtn=$("#videoModeBtn");
   if(btn){
-    btn.classList.toggle("active",imageMode);
-    btn.title=imageMode?"Image mode ON":"Generate or edit image";
+    btn.classList.toggle("active",imageMode);btn.setAttribute("aria-pressed",String(imageMode));
+    btn.title=imageMode?"Image mode on: describe the image you want":"Make or edit an image";
   }
-  if(vbtn)vbtn.classList.remove("active");
+  if(vbtn){vbtn.classList.remove("active");vbtn.setAttribute("aria-pressed","false")}
   if(promptEl){
     promptEl.placeholder=imageMode
       ? (attachments.some(a=>a.kind==="image") ? "Describe the edit you want…" : "Describe the image you want…")
-      : "Message your AI…";
+      : "How can I help you today?";
   }
   setMascotState?.(imageMode?"thinking":"idle");
 }
@@ -1533,14 +1536,14 @@ function setVideoMode(on){
   const btn=$("#videoModeBtn");
   const ibtn=$("#imageModeBtn");
   if(btn){
-    btn.classList.toggle("active",videoMode);
-    btn.title=videoMode?"Video mode ON":"Generate or animate video";
+    btn.classList.toggle("active",videoMode);btn.setAttribute("aria-pressed",String(videoMode));
+    btn.title=videoMode?"Video mode on: describe the video you want":"Make a video";
   }
-  if(ibtn)ibtn.classList.remove("active");
+  if(ibtn){ibtn.classList.remove("active");ibtn.setAttribute("aria-pressed","false")}
   if(promptEl){
     promptEl.placeholder=videoMode
       ? (attachments.some(a=>a.kind==="image") ? "Describe how this image should animate…" : "Describe the video you want…")
-      : "Message your AI…";
+      : "How can I help you today?";
   }
   setMascotState?.(videoMode?"thinking":"idle");
 }

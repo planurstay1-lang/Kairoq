@@ -195,3 +195,8 @@ dialog select:focus,dialog textarea:focus,dialog input:focus{border-color:var(--
 #saveSettings{display:flex!important;width:auto!important;margin:20px 0 0 auto!important;align-items:center}
 dialog label,dialog .field-label{color:var(--d-ink)!important;font-weight:500}
 
+
+/* Composer tool buttons: a clear on-state for image and video modes */
+.composer .tool-btn{color:var(--d-ink-2)!important;transition:background-color .15s,color .15s}
+.composer .tool-btn:hover{background:var(--d-tint)!important;color:var(--d-ink)!important}
+.composer .tool-btn.active,.composer .tool-btn[aria-pressed=true]{background:var(--d-ink)!important;color:#fff!important;box-shadow:var(--d-shadow-1)}
