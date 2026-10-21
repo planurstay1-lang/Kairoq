@@ -284,10 +284,8 @@ function messageItem(m,last,index){
  const li=document.createElement('li');li.className=m.role+(m.mode==='discuss'?' discuss':'')+(m.failed?' failed':'');
  const tl=m.timeline||[];
  if(m.role==='assistant'&&index!=null){
-  // Like Lovable: "Thought for Ns", the answer (formatted), then what was done, folded.
-  const think=tl.find(e=>e.t==='think');
-  const thoughtMs=m.thought_ms!=null?m.thought_ms:think?think.ms:null;
-  if(thoughtMs!=null){const b=el('button','status-line done');b.type='button';b.append(el('span','status-text','Thought for '+secs(thoughtMs)),icon('chev'));b.onclick=()=>openDetail(index,'timeline');li.append(b)}
+  // Like Lovable: the reply, the plan it followed, the files it changed, and a quiet cost line.
+  // Thinking time, each step and every retry stay under Details.
   li.append(renderMarkdown(readable(m.text)));
   // The builder's open question: one click answers it and builds (asking was free).
   if(last&&m.question&&Array.isArray(m.question.options)&&m.question.options.length){
@@ -300,10 +298,15 @@ function messageItem(m,last,index){
    });
    li.append(q,el('p','q-hint','Pick one, or type your own answer. "ok" goes with the recommended option.'));
   }
-  const acts=tl.filter(e=>e.t!=='think'&&e.t!=='plan');
-  if(acts.length){
-   const d=el('details','acts'),s=el('summary');s.append(icon('down','toggle'),el('span',null,summarize(tl)||acts.length+' steps'));
-   d.append(s,rail(acts.slice(0,30),{}));li.append(d);
+  const plan=Array.isArray(m.plan)&&m.plan.length?m.plan:((tl.find(e=>e.t==='plan')||{}).items||[]);
+  if(plan.length&&!m.question){const ul=el('ul','plan-done');for(const p of plan)ul.append(el('li',null,p));li.append(ul)}
+  const changed=Array.isArray(m.changed)?m.changed:[];
+  if(changed.length){
+   const d=el('details','changes'),sm=el('summary');
+   sm.append(icon('down','toggle'),el('span',null,'Changed '+changed.length+' file'+(changed.length===1?'':'s')));
+   const ul=el('ul','changed-files');for(const f of changed.slice(0,20))ul.append(el('li',null,f.replace(/^src\//,'')));
+   if(changed.length>20)ul.append(el('li','more','+'+(changed.length-20)+' more'));
+   d.append(sm,ul);li.append(d);
   }
  }else{const body=el('div','msg-text');body.textContent=m.text;li.append(body)}
  if(m.images&&m.images.length){const s=document.createElement('span');s.className='changed';s.textContent='Attached: '+m.images.join(', ');li.append(s)}
@@ -312,13 +315,12 @@ function messageItem(m,last,index){
  if(m.role==='assistant'&&m.scope&&m.scope.length){const d=el('div','scope-chip');d.append(icon('note'),el('span',null,'Also changed '+m.scope.map(f=>f.area).join(' and ')+' ('+[...new Set(m.scope.flatMap(f=>f.files))].slice(0,4).join(', ')+'), which you did not ask about. If that was not intended, undo this version.'));li.append(d)}
  if(m.role==='assistant'&&m.memory){const bits=[...(m.memory.recipes||[]).map(t=>'Used your recipe: '+t),...(m.memory.recalled?['Looked at your project “'+m.memory.recalled+'”']:[]),...(m.memory.learned||[]).map(t=>'Remembered: '+t)];if(bits.length){const d=el('div','memory-chip');d.append(icon('think'),el('span',null,bits.join(' · ')));d.title='Open Memory to see or change this';d.onclick=()=>openMemory();li.append(d)}}
  if(m.role==='assistant'&&Array.isArray(m.sources)&&m.sources.length){const s=el('div','sources');s.append(el('span','sources-label','Sources'));for(const src of m.sources.slice(0,8)){const a=el('a','source',src.title&&src.title!==src.url?src.title.slice(0,60):src.url.replace(/^https?:\/\/(www\.)?/,'').slice(0,60));a.href=src.url;a.target='_blank';a.rel='noopener noreferrer';a.title=src.url;s.append(a)}li.append(s)}
- if(m.role==='assistant'&&!tl.length&&m.changed&&m.changed.length){const c=el('div','file-chips done');for(const f of m.changed.slice(0,12))c.append(fileChip(f));if(m.changed.length>12)c.append(el('span','chip more','+'+(m.changed.length-12)+' more'));li.append(c)}
  if(m.role==='assistant'&&(m.version||m.credits!=null)&&index!=null){
   const f=el('div','msg-meta');
   if(m.version)f.append(el('span','ver','v'+m.version));
   if(m.duration_ms!=null){const t=el('span');t.append(icon('clock'),secs(m.duration_ms));f.append(t)}
   if(m.credits!=null){const t=el('span');t.append(icon('coin'),creditsLabel(m));t.title='What this change cost';f.append(t)}
-  if(m.attempts>1)f.append(el('span',null,'Fixed '+(m.attempts-1)+' problem'+(m.attempts>2?'s':'')));
+  if(m.attempts>1)f.append(el('span','fixed','Fixed '+(m.attempts-1)+' problem'+(m.attempts>2?'s':'')+' on the way'));
   const det=el('button','link-btn details-link','Details');det.type='button';det.onclick=()=>openDetail(index,'timeline');f.append(det);
   li.append(f);
  }
