@@ -812,7 +812,9 @@ function workCard(){
   const status=el('button','status-line');status.type='button';status.append(el('span','status-text','Thinking'),icon('chev'));status.onclick=()=>openDetail('live');
   const head=el('div','work-head');head.append(status,el('span','work-time'));const stop=el('button','ghost work-stop','Stop');stop.type='button';stop.onclick=()=>$('stop-job').click();head.append(stop);
   // Like Lovable: one status line, then what Kairoq says and plans; the step checklist stays in Details.
-  li.append(head,el('div','work-msg hidden'),el('ol','stages'),el('p','work-think hidden'),el('ol','rail live'));
+  // Status line, Kairoq's sentence, the plan ticking off, the files as they change. The step
+  // rail and the model's thinking stay in the card for Details, hidden from the chat.
+  li.append(head,el('div','work-msg hidden'),el('ul','plan-live hidden'),el('ul','changed-files live hidden'),el('ol','stages'),el('p','work-think hidden'),el('ol','rail live'));
   $('messages').append(li);$('messages').scrollTop=$('messages').scrollHeight;
  }
  return li;
@@ -878,9 +880,17 @@ function renderWork(j){
  for(const e of liveEvents(j).filter(e=>e.t==='edit'||e.t==='fix'||(e.t==='build'&&e.ok===false)).slice(-6))r.append(eventRow(e,{live:true}));
  const msg=li.querySelector('.work-msg');
  const said=j.mode==='discuss'?(st&&st.text)||'':j.mode==='agent'&&j.agent&&j.agent.steps.length?'':work.message;
- const planText=j.mode!=='discuss'&&work.plan&&work.plan.length?work.plan.map(x=>'- '+x).join('\n'):'';
- const body=[said,planText].filter(Boolean).join('\n\n');
- msg.classList.toggle('hidden',!body);msg.replaceChildren(body?renderMarkdown(body):'');
+ msg.classList.toggle('hidden',!said);msg.replaceChildren(said?renderMarkdown(said):'');
+ // The plan ticks off as the work lands: one item per file written while the code is being
+ // written (an estimate), every item once the app is building or being tested.
+ const phase=phaseOf(j),stage={queued:0,thinking:0,designing:0,writing:1,images:1,fixing:1,building:2,testing:3,complete:3}[phase]??1;
+ const plan=j.mode==='discuss'?[]:(work.plan||[]),planEl=li.querySelector('.plan-live');
+ planEl.replaceChildren();planEl.classList.toggle('hidden',!plan.length);
+ const done=stage>=2?plan.length:Math.min(Math.max(plan.length-1,0),work.files.length);
+ plan.forEach((p,i)=>planEl.append(el('li',i<done?'done':i===done&&stage<2?'current':'',p)));
+ const filesEl=li.querySelector('.changed-files.live');filesEl.replaceChildren();
+ const files=j.mode==='discuss'?[]:work.files;filesEl.classList.toggle('hidden',!files.length);
+ for(const f of files)filesEl.append(el('li',f===work.current&&phase==='writing'?'current':'',f.replace(/^src\//,'')));
  if(detailState.source==='live')renderDetail();
  if(stick)list.scrollTop=list.scrollHeight;
 }
