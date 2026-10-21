@@ -825,6 +825,10 @@ function money(n){
 function escapeHTML(s){
   return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 }
+// The Studio, sales, tour and listing renderers call this spelling; missing values render as empty text.
+function escapeHtml(s){
+  return escapeHTML(s??"");
+}
 
 function renderMarkdown(markdown=""){
   let text=String(markdown??"")
@@ -1048,7 +1052,7 @@ function appendMessage(msg,index,scroll=true){
 
 function welcome(){
   const w=document.createElement("div");w.className="welcome";
-  w.innerHTML=`<div class="orb">✦</div><h1>What would you like to work on?</h1><p>Make space for your next idea.</p><div class="suggestions"><button>Draft an email</button><button>Research a company</button><button>Plan my content</button><button>Find new leads</button></div>`;
+  w.innerHTML=`<div class="orb">✦</div><h1>What would you like to work on?</h1><p>Ask a question, build an app, or hand Kairoq a task.</p><div class="suggestions"><button>Draft an email</button><button>Research a company</button><button>Plan my content</button><button>Find new leads</button></div>`;
   w.querySelectorAll(".suggestions button").forEach(b=>b.onclick=()=>{promptEl.value=b.textContent;resizePrompt();promptEl.focus()});
   return w;
 }
@@ -2568,10 +2572,7 @@ async function initializeProductLayer(){
   }
   applyDemoMode(!!state.demo_mode);
   if($("#demoModeToggle"))$("#demoModeToggle").onchange=()=>applyDemoMode($("#demoModeToggle").checked);
-  if(!state.onboarding_complete && !localStorage.getItem("pai_onboarding_seen")){
-    localStorage.setItem("pai_onboarding_seen","1");
-    setTimeout(openOnboarding,650);
-  }
+  // Like Lovable, the first screen is the prompt, not a setup wizard: setup opens only when asked.
 }
 
 
