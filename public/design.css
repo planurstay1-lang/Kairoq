@@ -56,11 +56,6 @@ input,textarea{caret-color:var(--d-focus)}
 /* ---------- The wash: one ambient backdrop behind Home and the new-chat screen ---------- */
 .main[data-view=chat]:has(.welcome)>.kh-sky{display:block!important}
 .main[data-view=chat]:has(.welcome){background:var(--d-bg)!important}
-.kh-sky::after{content:none!important}
-.kh-sky i:nth-child(1){background:#f2b48a!important}
-.kh-sky i:nth-child(2){background:#f4c98f!important}
-.kh-sky i:nth-child(3){background:#f6d9b8!important;opacity:.4!important}
-.kh-hero h1 em{background:var(--d-brand)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
 
 /* ---------- New-chat screen: plain top, a bright horizon rising behind the prompt ---------- */
 .main[data-view=chat]:has(.welcome)>.kh-sky{display:none!important}
@@ -177,28 +172,20 @@ dialog [class*=avatar],dialog .conn-icon,dialog .connector-icon{border-radius:10
 .wp-tab.active{background:var(--d-surface);color:var(--d-ink);box-shadow:var(--d-shadow-1),inset 0 0 0 1px var(--d-line)}
 .wp-all{border:0;background:transparent;color:var(--d-ink-2);font:500 13px/1 var(--font);padding:8px 10px;border-radius:9px;cursor:pointer}
 .wp-all:hover{background:var(--d-tint);color:var(--d-ink)}
-.wp-grid,#khAppList{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
-.wp-grid .kh-app,#khAppList .kh-app{display:flex;flex-direction:column;width:100%;padding:0;border:0;background:transparent;text-align:left;cursor:pointer;border-radius:14px}
-.wp-grid .kh-app-thumb,#khAppList .kh-app-thumb{position:relative;display:grid;place-items:center;aspect-ratio:16/10;border-radius:12px;overflow:hidden;border:1px solid var(--d-line);font-size:22px!important;transition:transform .2s,box-shadow .2s}
-.wp-grid .kh-app-thumb img,#khAppList .kh-app-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
-.wp-grid .kh-app:hover .kh-app-thumb,#khAppList .kh-app:hover .kh-app-thumb{transform:translateY(-2px);box-shadow:0 12px 28px -14px #15140f59}
-.wp-grid .kh-app-meta,#khAppList .kh-app-meta{display:flex;flex-direction:column;gap:2px;padding:10px 2px 0}
-.wp-grid .kh-app-meta strong,#khAppList .kh-app-meta strong{font-size:14px;font-weight:600;color:var(--d-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.wp-grid .kh-app-meta small,#khAppList .kh-app-meta small{font-size:12px;color:var(--d-ink-3)}
-.wp-empty{margin:8px 2px 4px;color:var(--d-ink-3);font-size:14px}
-@media(max-width:640px){.main[data-view=chat]:has(.welcome) .wp{padding:0 12px 32px}.wp-sheet{padding:14px 14px 20px;border-radius:20px}.wp-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.main[data-view=chat]:has(.welcome)>#messages{min-height:calc(100dvh - 64px - 170px - clamp(32px,14vh,120px))!important}}
+.wp-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+/* Cards as on the live Home: white, a hairline ring, the app's screenshot on top, name and time below */
+.wp-grid .kh-app{display:flex;flex-direction:column;align-items:stretch;width:100%;gap:0;padding:0;border:0;border-radius:14px;background:#fff;box-shadow:0 1px 2px #1c1b190d,0 0 0 1px #1c1b190f;overflow:hidden;text-align:left;cursor:pointer;transition:box-shadow .15s,transform .15s}
+.wp-grid .kh-app:hover{box-shadow:0 10px 24px -12px #1c1b1933,0 0 0 1px #1c1b191a;transform:translateY(-1px)}
 
-/* ---------- Home: the same horizon behind the prompt, the same sheet of apps ---------- */
-.main[data-view=command]>.kh-sky{display:none!important}
-.main[data-view=command]{isolation:isolate}
-.main[data-view=command] .kh-composer-slot{position:relative}
-.main[data-view=command] .kh-composer-slot::before{content:"";position:absolute;z-index:-1;left:50%;width:100vw;transform:translateX(-50%);top:-24vh;bottom:-220px;pointer-events:none;-webkit-mask-image:linear-gradient(#000 calc(100% - 180px),transparent);mask-image:linear-gradient(#000 calc(100% - 180px),transparent);
-  background:radial-gradient(120% 92% at 50% 100%,#7a2e3a 0%,#b4432a 22%,#e2703a 40%,#f2a341 56%,#f7d3a1 68%,#f7f6f300 84%)}
-.main[data-view=command] .kh-hero p{color:var(--d-ink-2)!important}
-#khApps{position:relative;z-index:1;background:var(--d-surface)!important;border:1px solid var(--d-line)!important;border-radius:24px!important;box-shadow:0 -10px 40px -24px #15140f40,var(--d-shadow-2)!important;padding:18px 22px 26px!important;margin-top:28px}
-#khApps h2{font-size:15px!important;font-weight:600!important;color:var(--d-ink)!important;margin:0 0 14px!important}
-#khAppList{display:grid!important}
-@media(max-width:640px){#khAppList{grid-template-columns:repeat(2,minmax(0,1fr))}#khApps{padding:14px!important;border-radius:20px!important}}
+
+
+
+
+
+
+.wp-empty{margin:8px 2px 4px;color:var(--d-ink-3);font-size:14px}
+@media(max-width:640px){.main[data-view=chat]:has(.welcome) .wp{padding:0 12px 32px}.wp-sheet{padding:14px 14px 20px;border-radius:20px}.wp-grid{grid-template-columns:1fr 1fr;gap:10px}.main[data-view=chat]:has(.welcome)>#messages{min-height:calc(100dvh - 64px - 170px - clamp(32px,14vh,120px))!important}}
+
 
 /* ---------- Settings and other dialogs: no tracked caps kicker, themed controls, a normal-size save ---------- */
 dialog .eyebrow{display:none!important}
@@ -208,5 +195,3 @@ dialog select:focus,dialog textarea:focus,dialog input:focus{border-color:var(--
 #saveSettings{display:flex!important;width:auto!important;margin:20px 0 0 auto!important;align-items:center}
 dialog label,dialog .field-label{color:var(--d-ink)!important;font-weight:500}
 
-/* App cards: ember tints, never random hues (set per card from the name in app.js) */
-.kh-app-thumb{background:linear-gradient(135deg,var(--t1,#f4d6cb),var(--t2,#e4a28a))!important;color:var(--t3,#6e2a1c)!important;font-family:var(--font)!important;font-weight:600!important;letter-spacing:-.02em}
