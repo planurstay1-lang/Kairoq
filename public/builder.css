@@ -6,7 +6,8 @@
 
 /* On a phone the toolbar scrolls sideways instead of cutting controls off */
 /* When the stage is narrow the toolbar scrolls sideways instead of wrapping over itself */
-#editor .stage-bar{overflow-x:auto;scrollbar-width:none;flex-wrap:nowrap!important}#editor .stage-bar::-webkit-scrollbar{display:none}#editor .stage-bar>*{flex-shrink:0}
+#editor .stage-bar{flex-wrap:nowrap!important;overflow:visible;position:relative;z-index:5}#editor .stage-bar>*{flex-shrink:0}
+@media(max-width:760px){#editor .stage-bar{overflow-x:auto;scrollbar-width:none}#editor .stage-bar::-webkit-scrollbar{display:none}}
 /* One typeface: the landing's highlighted words and project initials use Geist, not an italic serif */
 .landing{--serif:"Geist",ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 .landing h2 em,.hero h1 em{font-style:normal!important;font-weight:inherit!important;letter-spacing:inherit!important;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -66,8 +67,6 @@
 #editor #chat-input{font-size:14px!important;color:var(--b-ink)!important;caret-color:#c2512d}
 #editor #chat-form button[type=submit]{width:32px;height:32px;border-radius:999px!important;background:var(--b-ink)!important;color:#fff!important;border:0!important}
 #editor #chat-form button[type=submit]:disabled,#editor #chat-form button[type=submit].is-empty{background:var(--b-line)!important;color:#fff!important}
-#editor #connect-open{display:inline-flex!important;align-items:center;gap:6px}
-#editor #connect-open .lbl{line-height:1}
 #editor :focus-visible{outline:2px solid #c2512d!important;outline-offset:2px!important}
 
 /* "Implement this plan" under a Discuss reply: a real button, like Lovable's */
@@ -89,3 +88,10 @@
 #build-overlay .bo-card h3{margin:0;font-size:22px;font-weight:600;letter-spacing:-.02em;color:#15140f}
 #build-overlay .bo-card .bo-think{margin:0;color:#857f74;font-size:14px}
 #build-overlay .bo-kicker{display:none}
+
+/* ---------- Editor toolbar: only what is used every minute; the rest under the project menu ---------- */
+#editor .menu-panel{max-height:min(78vh,720px);overflow:auto;min-width:280px}
+#editor .menu-panel .menu-group{padding:10px 12px 4px;font-size:11px;font-weight:600;color:var(--b-ink-3)}
+#editor .menu-panel .menu-group:first-child{padding-top:4px}
+#editor #restore:disabled{opacity:.45;cursor:not-allowed}
+@media(min-width:900px){#editor #side-toggle{display:none!important}}

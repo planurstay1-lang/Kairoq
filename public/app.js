@@ -3585,3 +3585,13 @@ $('#salesImportForm')?.addEventListener('submit',async event=>{
  await refreshStudio();note.textContent=`${result.imported} imported · ${result.duplicates} duplicates skipped. Research and qualify next.`;setStatus(note.textContent);
  }catch(err){note.textContent=err.message;setStatus(err.message,true)}finally{if(button)button.disabled=false}
 });
+
+// More tools: the sheet that lists everything outside the six main sidebar items, each with
+// what it is for. A choice presses the original sidebar button, so nothing changes elsewhere.
+(()=>{
+  const dlg=$("#moreToolsDialog"),btn=$("#moreToolsBtn");if(!dlg||!btn)return;
+  btn.onclick=()=>{document.body.classList.remove("nav-open");$("#sidebarToggle")?.setAttribute("aria-expanded","false");dlg.showModal()};
+  dlg.querySelector("[data-close-more]").onclick=()=>dlg.close();
+  dlg.addEventListener("click",e=>{if(e.target===dlg)dlg.close()});
+  for(const b of dlg.querySelectorAll("button[data-open]"))b.onclick=()=>{dlg.close();$("#"+b.dataset.open)?.click()};
+})();

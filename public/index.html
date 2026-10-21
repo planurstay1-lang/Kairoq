@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="/sidebar.css?v=4">
   <link rel="stylesheet" href="/composer.css?v=4">
   <link rel="stylesheet" href="/home.css?v=13">
-  <link rel="stylesheet" href="/design.css?v=19">
+  <link rel="stylesheet" href="/design.css?v=21">
 </head>
 <body>
   <div id="loginOverlay" class="login-overlay hidden">
@@ -44,7 +44,7 @@
         <button type="button" id="outcomesNavBtn" class="kn-item"><svg class="kn-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg><span>Your work</span></button>
         <button type="button" id="historyNavBtn" class="kn-item"><svg class="kn-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>History</span></button>
         <button type="button" id="studioSideBtn" class="kn-item"><svg class="kn-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg><span>Studio</span></button>
-        <button type="button" id="buildNavBtn" class="kn-item" data-build-app><svg class="kn-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M13.5 6l-3 12"/></svg><span>Build an app</span></button>
+        <button type="button" id="buildNavBtn" class="kn-item" data-build-app><svg class="kn-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M13.5 6l-3 12"/></svg><span>Projects</span></button>
       </nav>
 
       <nav class="kn-group" aria-labelledby="kn-agents">
@@ -59,6 +59,7 @@
         <div class="kn-label" id="kn-tools">Tools</div>
         <button type="button" id="workspaceBtn" class="kn-item"><svg class="kn-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 6 1V5a2 2 0 0 0-3-1zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-6 1"/></svg><span>Memory</span></button>
         <button type="button" id="connectorsBtn" class="kn-item"><svg class="kn-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7V3M15 7V3M7 7h10v4a5 5 0 0 1-10 0zM12 16v5"/></svg><span>Connections</span></button>
+        <button type="button" id="moreToolsBtn" class="kn-item"><svg class="kn-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 14v7M14 17.5h7"/></svg><span>More tools</span></button>
         <button type="button" id="templatesBtn" class="kn-item"><svg class="kn-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Templates</span></button>
         <button type="button" id="playbookBtn" class="kn-item"><svg class="kn-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/></svg><span>How we work</span></button>
         <details class="kn-fold">
@@ -1313,6 +1314,32 @@
     </div>
   </dialog>
 
+    <dialog id="moreToolsDialog" class="kd" aria-label="More tools">
+    <div class="model-dialog-card kd-card">
+      <div class="settings-head"><div><h2>More tools</h2><p class="kd-sub">Everything else Kairoq can do. Each one opens in its own place.</p></div><button type="button" class="icon-btn" data-close-more aria-label="Close">✕</button></div>
+      <div class="mt-list">
+        <div class="mt-group">Work</div>
+        <button type="button" data-open="outcomesNavBtn"><b>Your work</b><span>What needs you, what is in progress, and the outcomes Kairoq is tracking</span></button>
+        <button type="button" data-open="historyNavBtn"><b>History</b><span>Every past chat and what came out of it</span></button>
+        <button type="button" data-open="workflowsBtn"><b>Workflows</b><span>Cards for jobs that run on a schedule or when something happens</span></button>
+        <div class="mt-group">Agents</div>
+        <button type="button" data-open="salesNavBtn"><b>Sales agent</b><span>Finds and qualifies leads, drafts outreach, and waits for your approval before sending</span></button>
+        <button type="button" data-open="marketingNavBtn"><b>Marketing agent</b><span>Plans content, writes and reviews posts, makes images and video, schedules with approval</span></button>
+        <button type="button" data-open="agentBtn"><b>Specialists</b><span>Focused helpers: research, calendar, communications, memory and monitoring</span></button>
+        <button type="button" data-open="botsBtn"><b>Watchers</b><span>Bots that check email, calendar or a website on a schedule and report back</span></button>
+        <div class="mt-group">Studio</div>
+        <button type="button" data-open="studioSideBtn"><b>Studio</b><span>Images, videos, avatars, property tours and listing packs</span></button>
+        <a href="/carousel-designer.html"><b>Carousel designer</b><span>Editorial social carousels in your brand</span></a>
+        <a href="/build-studio.html"><b>Build Studio</b><span>The long-form app planner: pick a build type, design direction and data setup first</span></a>
+        <a href="/api-studio.html"><b>API Intelligence</b><span>Import API documentation and build an app that uses it</span></a>
+        <div class="mt-group">Setup</div>
+        <button type="button" data-open="workspaceBtn"><b>Memory</b><span>Company facts and rules Kairoq remembers in every chat</span></button>
+        <button type="button" data-open="playbookBtn"><b>How we work</b><span>Your playbook: tone, approvals and what Kairoq may do on its own</span></button>
+        <button type="button" data-open="compareBtn"><b>Compare models</b><span>Try the same prompt on several AI models side by side</span></button>
+        <button type="button" data-open="opsBtn"><b>Security</b><span>Permissions, audit log and spending limits</span></button>
+      </div>
+    </div>
+  </dialog>
   <dialog id="templatesDialog" class="kd">
     <div class="model-dialog-card kd-card templates-card">
       <div class="settings-head kd-head">
@@ -1371,7 +1398,7 @@
     </div>
   </dialog>
 
-  <script src="/app.js?v=34"></script>
+  <script src="/app.js?v=35"></script>
 <script src="/connections.js?v=20"></script>
 </body>
 </html>

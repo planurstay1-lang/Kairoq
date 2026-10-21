@@ -350,6 +350,7 @@ function verifiedCard(v,checks,added){
 function renderVersions(){
  const sel=$('versions');sel.replaceChildren();
  for(const v of [...state.project.versions].reverse()){const o=document.createElement('option');o.value=v.n;o.textContent='v'+v.n+' · '+(v.broken?'⚠ did not load · ':'')+(v.summary||'').slice(0,40);if(v.n===state.project.current_version)o.selected=true;sel.append(o)}
+ syncRestore();
 }
 function previewFor(n){return state.project.preview_url.replace(/\/v\/\d+\/$/,'/v/'+n+'/')}
 function setPreview(url){if(!url)return;state.runtimeErrors=[];renderErrors();state.selected=null;renderVisual();$('frame').src=url;$('open').href=url;$('preview-open').href=url;watchPreview()}
@@ -380,7 +381,9 @@ async function rebuildPreview(){
  finally{btn.disabled=false}
 }
 $('preview-rebuild').onclick=rebuildPreview;
-$('versions').onchange=()=>setPreview(previewFor($('versions').value));
+$('versions').onchange=()=>{setPreview(previewFor($('versions').value));syncRestore()};
+// Restore only makes sense when the preview shows a version that is not the current one.
+function syncRestore(){const r=$('restore');if(!r||!state.project)return;r.disabled=Number($('versions').value)===state.project.current_version}
 $('restore').onclick=async()=>{
  const n=Number($('versions').value);if(n===state.project.current_version)return;
  const {project}=await api('/projects/'+state.project.id+'/restore',{method:'POST',body:{version:n}});
@@ -2580,3 +2583,16 @@ $('polish').onclick=()=>{if(!state.me.design_review){text($('chat-error'),'The d
 // Dropdown menus (details.menu) close when something inside is chosen or when clicking elsewhere.
 document.addEventListener('click',e=>{for(const d of document.querySelectorAll('details.menu[open]'))if(!d.contains(e.target)||e.target.closest('.menu-panel button,.menu-panel a'))d.removeAttribute('open')});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')for(const d of document.querySelectorAll('details.menu[open]'))d.removeAttribute('open')});
+
+// One project menu: testing, connections and the rest live under the gear, like Lovable's
+// single project menu, so the toolbar keeps only what is used every minute.
+(()=>{
+ const panel=document.querySelector('#menu-project .menu-panel'),test=document.getElementById('menu-test'),connect=document.getElementById('connect-open');
+ if(!panel||!test)return;
+ const group=t=>{const d=document.createElement('div');d.className='menu-group';d.textContent=t;return d};
+ panel.prepend(group('Project'));
+ panel.append(group('Test'),...test.querySelectorAll('button'));
+ if(connect){connect.className='';connect.replaceChildren();const b=document.createElement('b');b.textContent='Connections';const sp=document.createElement('span');sp.textContent='GitHub, payments, email, Figma, WhatsApp and more';connect.append(b,sp);panel.append(group('Connect'),connect)}
+ test.remove();
+ const sum=document.querySelector('#menu-project summary');if(sum)sum.title='Project: restore, design, phone app, share, settings, tests and connections';
+})();
