@@ -2607,3 +2607,12 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')for(const d of docum
  test.remove();
  const sum=document.querySelector('#menu-project summary');if(sum)sum.title='Project: restore, design, phone app, share, settings, tests and connections';
 })();
+
+// The builder's own sidebar keeps New, Projects and Templates; the rest sits in More tools,
+// each with what it is for. A choice presses the original sidebar button.
+(()=>{
+ const dlg=document.getElementById('more-dialog'),btn=document.getElementById('side-more');if(!dlg||!btn)return;
+ btn.onclick=()=>{for(const b of dlg.querySelectorAll('button[data-side]')){const t=document.getElementById(b.dataset.side);b.classList.toggle('hidden',!t||t.classList.contains('hidden'))}dlg.showModal()};
+ dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
+ for(const b of dlg.querySelectorAll('button[data-side]'))b.onclick=()=>{dlg.close();document.getElementById(b.dataset.side)?.click()};
+})();

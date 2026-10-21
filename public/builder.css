@@ -164,3 +164,15 @@
 #editor li.work .plan-live li{font-size:14.5px!important;line-height:1.6}
 #editor li.work .plan-live{gap:7px!important;margin-top:14px!important}
 #editor li.work .changed-files.live{margin-top:14px!important}
+
+/* ---------- Builder sidebar: New, Projects, Templates, More tools; the rest explained in a sheet ---------- */
+#side .side-nav #side-memory,#side .side-nav #side-wa,#side .side-nav #side-web,#side .side-nav #side-leads,#side .side-nav #side-check,#side .side-nav #side-admin,#side .side-nav #side-docs{display:none!important}
+#more-dialog .dialog{max-width:560px}
+.mt-list{display:grid;gap:4px;margin:8px 0 4px;max-height:min(66vh,620px);overflow:auto}
+.mt-group{margin:12px 0 4px;font-size:12px;font-weight:600;color:var(--b-ink-3,#857f74)}
+.mt-group:first-child{margin-top:0}
+.mt-list>button{display:grid!important;gap:2px;width:100%;text-align:left;padding:10px 12px!important;border:1px solid transparent!important;border-radius:12px!important;background:transparent!important;color:var(--b-ink,#15140f)!important;box-shadow:none!important;cursor:pointer;font:inherit!important}
+.mt-list>button:hover{background:var(--b-tint,#f1efea)!important;border-color:var(--b-line,#e8e5de)!important}
+.mt-list>button.hidden{display:none!important}
+.mt-list b{font-size:14px;font-weight:600}
+.mt-list span{font-size:13px;color:var(--b-ink-2,#4f4b43);line-height:1.4;font-weight:400}
