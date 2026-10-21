@@ -286,7 +286,8 @@ function messageItem(m,last,index){
  if(m.role==='assistant'&&index!=null){
   // Like Lovable: the reply, the plan it followed, the files it changed, and a quiet cost line.
   // Thinking time, each step and every retry stay under Details.
-  li.append(renderMarkdown(readable(m.text)));
+  // A system note (imported, restored, a visual edit) is its card alone; the card already says it.
+  if(!(m.version&&!m.question&&['system','visual'].includes(m.mode)))li.append(renderMarkdown(readable(m.text)));
   // The builder's open question: one click answers it and builds (asking was free).
   if(last&&m.question&&Array.isArray(m.question.options)&&m.question.options.length){
    const q=el('div','question-options');
@@ -298,15 +299,22 @@ function messageItem(m,last,index){
    });
    li.append(q,el('p','q-hint','Pick one, or type your own answer. "ok" goes with the recommended option.'));
   }
-  const plan=Array.isArray(m.plan)&&m.plan.length?m.plan:((tl.find(e=>e.t==='plan')||{}).items||[]);
-  if(plan.length&&!m.question){const ul=el('ul','plan-done');for(const p of plan)ul.append(el('li',null,p));li.append(ul)}
-  const changed=Array.isArray(m.changed)?m.changed:[];
-  if(changed.length){
-   const d=el('details','changes'),sm=el('summary');
-   sm.append(icon('down','toggle'),el('span',null,'Changed '+changed.length+' file'+(changed.length===1?'':'s')));
-   const ul=el('ul','changed-files');for(const f of changed.slice(0,20))ul.append(el('li',null,f.replace(/^src\//,'')));
-   if(changed.length>20)ul.append(el('li','more','+'+(changed.length-20)+' more'));
-   d.append(sm,ul);li.append(d);
+  // Like Lovable: a finished change is one card with a one-line title, the cost in small
+  // grey, and Details and Preview. The plan, files, time and retries live in Details.
+  if(m.version&&!m.question){
+   const ver=(state.project&&state.project.versions||[]).find(v=>v.n===m.version);
+   const first=String(m.text||'').replace(/[*_`#>]/g,'').split(/(?<=[.!?])\s+/)[0]||'';
+   const title=(first.length>8&&first.length<=110?first:(ver&&ver.summary)||first||'Version '+m.version).replace(/[.:]\s*$/,'');
+   const card=el('div','change-card'),head=el('div','cc-head');
+   head.append(el('i','cc-mark'),el('span','cc-title',title));
+   if(m.credits!=null)head.append(el('span','cc-cost',creditsLabel(m)));
+   const acts=el('div','cc-actions');
+   const det=el('button','cc-btn','Details');det.type='button';det.onclick=()=>openDetail(index,'timeline');
+   const prev=el('button','cc-btn','Preview');prev.type='button';prev.title='Show version '+m.version+' in the preview';
+   prev.onclick=()=>{const sel=$('versions');if([...sel.options].some(o=>o.value===String(m.version))){sel.value=String(m.version);sel.dispatchEvent(new Event('change'))}};
+   acts.append(det,prev);card.append(head,acts);
+   const v=m.verified;if(v&&v.opens&&!(v.menus&&v.menus.dead)&&v.phone!==false&&v.saves!==false&&v.signup!==false)card.append(el('div','cc-tested','Tested in a browser: opens, works on a phone'+(v.saves?', saves records':'')));
+   li.append(card);
   }
  }else{const body=el('div','msg-text');body.textContent=m.text;li.append(body)}
  if(m.images&&m.images.length){const s=document.createElement('span');s.className='changed';s.textContent='Attached: '+m.images.join(', ');li.append(s)}
@@ -315,15 +323,6 @@ function messageItem(m,last,index){
  if(m.role==='assistant'&&m.scope&&m.scope.length){const d=el('div','scope-chip');d.append(icon('note'),el('span',null,'Also changed '+m.scope.map(f=>f.area).join(' and ')+' ('+[...new Set(m.scope.flatMap(f=>f.files))].slice(0,4).join(', ')+'), which you did not ask about. If that was not intended, undo this version.'));li.append(d)}
  if(m.role==='assistant'&&m.memory){const bits=[...(m.memory.recipes||[]).map(t=>'Used your recipe: '+t),...(m.memory.recalled?['Looked at your project “'+m.memory.recalled+'”']:[]),...(m.memory.learned||[]).map(t=>'Remembered: '+t)];if(bits.length){const d=el('div','memory-chip');d.append(icon('think'),el('span',null,bits.join(' · ')));d.title='Open Memory to see or change this';d.onclick=()=>openMemory();li.append(d)}}
  if(m.role==='assistant'&&Array.isArray(m.sources)&&m.sources.length){const s=el('div','sources');s.append(el('span','sources-label','Sources'));for(const src of m.sources.slice(0,8)){const a=el('a','source',src.title&&src.title!==src.url?src.title.slice(0,60):src.url.replace(/^https?:\/\/(www\.)?/,'').slice(0,60));a.href=src.url;a.target='_blank';a.rel='noopener noreferrer';a.title=src.url;s.append(a)}li.append(s)}
- if(m.role==='assistant'&&(m.version||m.credits!=null)&&index!=null){
-  const f=el('div','msg-meta');
-  if(m.version)f.append(el('span','ver','v'+m.version));
-  if(m.duration_ms!=null){const t=el('span');t.append(icon('clock'),secs(m.duration_ms));f.append(t)}
-  if(m.credits!=null){const t=el('span');t.append(icon('coin'),creditsLabel(m));t.title='What this change cost';f.append(t)}
-  if(m.attempts>1)f.append(el('span','fixed','Fixed '+(m.attempts-1)+' problem'+(m.attempts>2?'s':'')+' on the way'));
-  const det=el('button','link-btn details-link','Details');det.type='button';det.onclick=()=>openDetail(index,'timeline');f.append(det);
-  li.append(f);
- }
  if(m.role==='assistant'&&(m.verified||m.tests_added))li.append(verifiedCard(m.verified||{},m.checks,m.tests_added));
  if(m.checks&&!tl.some(e=>e.t==='check')){const c=document.createElement('div');c.className='check-chip '+(m.checks.failed.length?'bad':'ok');c.textContent=m.checks.failed.length?'✗ Broke '+m.checks.failed.length+' of '+m.checks.ran+' saved checks: '+m.checks.failed.join(', '):'✓ All '+m.checks.ran+' saved check'+(m.checks.ran===1?'':'s')+' passed';li.append(c)}
  if(m.steps&&m.steps.length&&!tl.length){const d=document.createElement('details'),s=document.createElement('summary');s.textContent='Agent steps ('+m.steps.length+')';const ol=document.createElement('ol');ol.className='agent-steps';for(const st of m.steps){const li2=document.createElement('li');li2.textContent=st;ol.append(li2)}d.append(s,ol);li.append(d)}
